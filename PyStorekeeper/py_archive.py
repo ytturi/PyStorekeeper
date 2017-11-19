@@ -11,6 +11,8 @@ import os
     default='', type=str, help='Configuration file to import (JSON)')
 def py_archive(verbose, config):
     confs = initialize(verbose_level=verbose, conf_path=config)
+    if not confs:  # Could not load confs
+        exit(-1)
     fs_paths = confs.get('paths', [])
     for fs_path in fs_paths:
         files_archive.archive_path(fs_path)
