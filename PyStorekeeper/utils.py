@@ -56,8 +56,8 @@ def initialize(verbose_level=0, conf_path=None):
             verbose_log('Conf file not found!', 'error')
     if verbose_level != 0: # Override confs with command-line args
         confs.update({'verbose':verbose_level})
-    verbose_log('Confs:', 'info', 1)
+    verbose_log('Confs:', 'info', 2)
     for conf_key, conf_data in confs.items():
-        verbose_log('\t- {}: {}'.format(conf_key, conf_data), 'info', 1)
+        verbose_log('\t- {}: {}'.format(conf_key, conf_data), 'info', 2)
     verbose_log('Loaded confs')
     return confs
