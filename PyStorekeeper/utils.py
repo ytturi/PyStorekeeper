@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from os.path import isfile, isdir
 from json import loads
 import logging
@@ -53,6 +54,12 @@ def verbose_log(msg=False, log_type='info', level=0):
     elif verb_level and verb_level >= level:
         return _log_msg(msg=msg, log_type=log_type)
     return False
+
+
+def get_config(argname, default=False):
+    if argname not in confs:
+        verbose_log('{} is not found in confs!', 'debug')
+    return confs.get(argname, default)
 
 
 def initialize(verbose_level=0, conf_path=None):
