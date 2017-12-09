@@ -1,5 +1,7 @@
-from utils import verbose_log
-from os.path import isfile, isdir, makedirs, join
+from utils import verbose_log, get_config
+from os import makedirs
+from os.path import isfile, isdir, join
+from os.path import basename, normpath
 from shutil import rmtree
 from datetime import datetime
 import tarfile
@@ -18,10 +20,11 @@ def archive_path(filesystem_path):
     if not isdir(filesystem_path):
         verbose_log('Path {} does not exist', 'error')
         return False
+    filesystem_path = normpath(filesystem_path)
     verbose_log('Archiving path {}'.format(filesystem_path))
     # Debian-based default path
-    archive_path = confs.get('archiving_path', '/opt/py_archive/backups')
-    archive_file = confs.get('paths', [filesystem_path]).index(filesystem_path)
+    archive_path = get_config('archiving_path', '/opt/py_archive/backups')
+    archive_file = get_config('paths', [filesystem_path]).index(filesystem_path)
     archive_file_name = '{}_archived_path_{}'.format(
         datetime.now().strftime('%Y%m%d'), archive_file
     )
@@ -30,7 +33,7 @@ def archive_path(filesystem_path):
         'tmp_{}.tar.gz'.format(archive_file_name)
     )
     archive_file = join(archive_file_path, archive_file_name)
-    compression_method = confs.get('archive_compression', 'tar.gz')
+    compression_method = get_config('archive_compression', 'tar.gz')
     if compression_method != 'tar.gz':
         verbose_log('Compression method not supported', 'error')
         return False
@@ -41,7 +44,7 @@ def archive_path(filesystem_path):
         makedirs(archive_file_path)
         # Second step is to add all path tree to an archive
         with tarfile.open(archive_file_name, 'w:gz') as archive:
-            archive.add(filesystem_path, arcname=filesystem_path)
+            archive.add(filesystem_path, arcname=basename(filesystem_path))
     except Exception as err:
         verbose_log('Could not archive "{}"!'.format(filesystem_path), 'error')
         verbose_log(err.msg, 'error')
