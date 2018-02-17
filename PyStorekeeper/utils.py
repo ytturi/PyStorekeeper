@@ -19,6 +19,8 @@ def _log_msg(msg='', log_type='info'):
      if log_type.lower() == 'info':
          logger.info(msg)
          return True
+     elif log_type.lower() == 'warning':
+         logger.warning(msg)
      elif log_type.lower() == 'debug':
          logger.debug(msg)
          return True
@@ -76,10 +78,15 @@ def initialize(verbose_level=0, conf_path=None):
     :rype:                dict
     """
     logging.basicConfig(
-        format='%(asctime)s%(levelname)s| %(message)s',
-        datefmt='[%Y/%m/%d-%H:%M:%S]',
+        format='[%(asctime)s] %(levelname)s | %(message)s',
+        datefmt='%Y/%m/%d-%H:%M:%S',
         level=logging.INFO
     )
+    logging.addLevelName(logging.INFO, '  INFO  ')
+    logging.addLevelName(logging.ERROR, '  ERROR ')
+    logging.addLevelName(logging.DEBUG, '  DEBUG ')
+    logging.addLevelName(logging.CRITICAL, 'CRITICAL')
+    logging.addLevelName(logging.WARNING, ' WARNING')
     global confs
     # Default configs
     confs = {
