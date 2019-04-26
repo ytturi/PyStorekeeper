@@ -1,4 +1,5 @@
-from utils import verbose_log, get_config
+from PyStorekeeper.config_manager import get_config
+from PyStorekeeper.logging import verbose_log
 from os import makedirs
 from os.path import isfile, isdir, join
 from os.path import basename, normpath

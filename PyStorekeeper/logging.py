@@ -15,7 +15,7 @@ def _log_msg(msg='', log_type='info'):
      :return:         TRUE if logged with any of the available log_types
      :rtype:          bool
      """
-     logger = logging.getLogger()    
+     logger = logging.getLogger('pystorekeeper')
      if log_type.lower() == 'info':
          logger.info(msg)
          return True
@@ -33,7 +33,7 @@ def _log_msg(msg='', log_type='info'):
      return False
    
 
-def verbose_log(msg=False, log_type='info', level=0):
+def verbose_log(msg=False, log_type='info', level=0, confs=None):
     """
     Method to log using logger type and verbose level from confs
     :param msg:      Message to log
@@ -46,9 +46,11 @@ def verbose_log(msg=False, log_type='info', level=0):
     :rtype:          bool
     """
     logger = logging.getLogger()
-    if 'confs' not in globals().keys():
-        logger.error('Trying to log without initialize!')
-    verb_level = confs.get('verbose', -1)
+    if confs is not None:
+        verb_level = confs.get('verbose', -1)
+    else:
+        from PyStorekeeper.config_manager import get_config
+        verb_level = get_config('verbose', -1)
     if not verb_level and level != 0:
         return False
     elif not verb_level and level == 0:
@@ -57,54 +59,14 @@ def verbose_log(msg=False, log_type='info', level=0):
         return _log_msg(msg=msg, log_type=log_type)
     return False
 
-
-def get_config(argname, default=False):
-    if argname not in confs:
-        verbose_log('{} is not found in confs!', 'debug')
-    return confs.get(argname, default)
-
-
-def initialize(verbose_level=0, conf_path=None):
-    """
-    Method to initialize the Storekeeper
-    - Init logger with a formatter and level
-    - Init confs with default values
-    - Import confs from configuration file if provided
-    :param verbose_level: Verbose level provided by command_line args
-    :type verbose_level:  int
-    :param conf_path:     Configuration file path to read and import
-    :type conf_path:      str
-    :return:              Configurations using default confs and imported
-    :rype:                dict
-    """
+def initialize_logger():
     logging.basicConfig(
         format='[%(asctime)s] %(levelname)s | %(message)s',
         datefmt='%Y/%m/%d-%H:%M:%S',
-        level=logging.INFO
+        level=logging.NOTSET
     )
     logging.addLevelName(logging.INFO, '  INFO  ')
     logging.addLevelName(logging.ERROR, '  ERROR ')
     logging.addLevelName(logging.DEBUG, '  DEBUG ')
     logging.addLevelName(logging.CRITICAL, 'CRITICAL')
     logging.addLevelName(logging.WARNING, ' WARNING')
-    global confs
-    # Default configs
-    confs = {
-        'verbose':verbose_level,
-        'archive_compression': 'tar.gz',
-    }
-    if conf_path:
-        verbose_log('Using config file {}'.format(conf_path), 'info', 1)
-        if isfile(conf_path):
-            with open(conf_path, 'r') as conf_file:
-                confs.update(loads(conf_file.read()))
-        else:
-            verbose_log('Conf file not found!', 'error')
-            return False
-    if verbose_level != 0: # Override confs with command-line args
-        confs.update({'verbose':verbose_level})
-    verbose_log('Confs:', 'info', 2)
-    for conf_key, conf_data in confs.items():
-        verbose_log('\t- {}: {}'.format(conf_key, conf_data), 'info', 2)
-    verbose_log('Loaded confs')
-    return confs
