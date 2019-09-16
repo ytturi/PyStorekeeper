@@ -6,11 +6,13 @@ def read(fname):
 
 setup(
     name = "PyStorekeeper",
-    version = "0.0.1",
+    version = read(".version"),
     author = "Ytturi",
     author_email = "ytturi@protonmail.com",
-    description = ("A Python Backup tool for Databases and files. Dump,"
-        " compress and unify your data in a single archive."),
+    description = (
+        "A Python Backup tool for Databases and files. Dump,"
+        " compress and unify your data in a single archive."
+    ),
     license = "GNU GENERAL PUBLIC LICENSE v3",
     keywords = "backup tool click",
     url = "https://github.com/ytturi/PyStorekeeper",
@@ -18,7 +20,6 @@ setup(
     long_description=read('README.md'),
     install_requires=[
         'click',
-        'logging',
     ],
     entry_points='''
         [console_scripts]
